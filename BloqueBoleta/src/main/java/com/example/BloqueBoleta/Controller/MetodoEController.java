@@ -30,10 +30,10 @@ public class MetodoEController {
     private MetodoEService metodoEService;
 
     // --- MOSTRAR TODOS LOS REGISTROS ---
-    @Operation(summary = "Listar todos los métodos de entrega")
+    @Operation(summary = "Listar todos los métodos de entrega", description = "Muestra todas las formas de entrega")
     @GetMapping
     public ResponseEntity<List<MetodoEDTO>> listarTodas() {
-        // Llama a tu método: MostrarTodas()
+    
         List<MetodoEDTO> lista = this.metodoEService.MostrarTodas();
         if (lista.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Estado 204
@@ -42,11 +42,11 @@ public class MetodoEController {
     }
 
     // --- BUSCAR REGISTRO POR ID ---
-    @Operation(summary = "Buscar método de entrega por ID")
+    @Operation(summary = "Buscar método de entrega por ID", description = " Busca segun la ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
-            // Llama a tu método: buscarPorId()
+            
             MetodoEDTO metodoEDTO = this.metodoEService.buscarPorId(id);
             return new ResponseEntity<>(metodoEDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -55,11 +55,11 @@ public class MetodoEController {
     }
 
     // --- GUARDAR UN NUEVO REGISTRO ---
-    @Operation(summary = "Registrar nuevo método de entrega")
+    @Operation(summary = "Registrar nuevo método de entrega", description = "Agrega una nueva forma de entrega")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody MetodoE nuevoMetodoE) {
         try {
-            // Llama a tu método: guardarMetodoE()
+            
             MetodoEDTO guardado = this.metodoEService.guardarMetodoE(nuevoMetodoE);
             return new ResponseEntity<>(guardado, HttpStatus.CREATED); // Estado 201
         } catch (Exception e) {
@@ -68,14 +68,13 @@ public class MetodoEController {
     }
 
     // --- ACTUALIZAR REGISTRO EXISTENTE ---
-    @Operation(summary = "Actualizar método de entrega por ID")
+    @Operation(summary = "Actualizar método de entrega por ID", description = "Actualiza un metodo de entrega")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody MetodoE metodoE) {
         try {
-            // Llama a tu método: actualizarMetodoE()
+            
             MetodoE actualizado = this.metodoEService.actualizarMetodoE(id, metodoE);
             
-            // Armamos el DTO manual mapeando también el campo 'tiempo'
             MetodoEDTO resultadoDTO = new MetodoEDTO();
             resultadoDTO.setId(actualizado.getId());
             resultadoDTO.setNombre(actualizado.getNombre());
@@ -88,11 +87,11 @@ public class MetodoEController {
     }
 
     // --- ELIMINAR REGISTRO POR ID ---
-    @Operation(summary = "Eliminar método de entrega por ID")
+    @Operation(summary = "Eliminar método de entrega", description = "Elimina una forma de entrega")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         try {
-            // Llama a tu método: EliminarMetodoE()
+            
             String resultado = this.metodoEService.EliminarMetodoE(id);
             return new ResponseEntity<>(resultado, HttpStatus.OK);
         } catch (RuntimeException e) {

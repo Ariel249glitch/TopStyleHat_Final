@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/gorros")
+@RequestMapping("/api/v1/gorro")
 @Tag(name = "Gorro", description = "Módulo de gestión del catálogo de gorros")
 @SuppressWarnings("all")
 public class GorroController {
@@ -31,7 +31,7 @@ public class GorroController {
     private GorroService gorroService;
 
     // MOSTRAR TODOS LOS REGISTROS
-    @Operation(summary = "Listar todos los gorros")
+    @Operation(summary = "Listar todos los gorros", description = "Muestra todos los Gorros")
     @GetMapping
     public ResponseEntity<List<GorroDTO>> listarTodas() {
         
@@ -43,7 +43,7 @@ public class GorroController {
     }
 
     // --- BUSCAR REGISTRO POR ID ---
-    @Operation(summary = "Buscar gorro por ID")
+    @Operation(summary = "Buscar gorro por ID", description = "Busca un gorro segun su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
@@ -56,7 +56,7 @@ public class GorroController {
     }
 
     // --- GUARDAR UN NUEVO REGISTRO ---
-    @Operation(summary = "Registrar nuevo gorro")
+    @Operation(summary = "Registrar nuevo gorro", description = "Guarda un gorro en el sistema")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Gorro nuevoGorro) {
         try {
@@ -69,7 +69,7 @@ public class GorroController {
     }
 
     // --- ACTUALIZAR REGISTRO EXISTENTE ---
-    @Operation(summary = "Actualizar gorro por ID")
+    @Operation(summary = "Actualizar", description = "Actualiza un gorro existente")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody Gorro gorro) {
         try {
@@ -89,7 +89,7 @@ public class GorroController {
     }
 
     //ELIMINAR REGISTRO POR ID 
-    @Operation(summary = "Eliminar gorro por ID")
+    @Operation(summary = "Eliminar gorro", description = "Elimina un gorro por su ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         

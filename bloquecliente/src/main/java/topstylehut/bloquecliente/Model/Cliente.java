@@ -14,8 +14,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,11 +31,12 @@ public class Cliente {
     private String nombre;
 
     @NotBlank(message = "La dirección es obligatoria")
+    @Size(min = 5, max = 255, message = "La dirección debe tener entre 5 y 255 caracteres")
+    @Column(nullable = false, length = 255)
     private String direccion;
 
-    //Cliente - Comuna
-    @ManyToOne
-    @JoinColumn(name = "comuna_id")
+    // Cliente - Comuna
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "comuna_id", nullable = false)
     private Comuna comuna;
-
 }

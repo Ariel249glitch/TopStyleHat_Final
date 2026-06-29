@@ -34,7 +34,7 @@ public class Boleta {
 
     //Boleta - MetodoEnvio
     @ManyToOne
-    @JoinColumn(name = "metodo_envio_id")
+    @JoinColumn(name = "metodo_envio_id", nullable = false)
     private MetodoE metodoEnvio;
 
     //conectar con gorro

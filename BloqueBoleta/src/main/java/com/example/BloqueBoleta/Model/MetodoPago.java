@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "MetodoPago")
+@Table(name = "metodo_pago")
 public class MetodoPago {
 
     @Id
@@ -26,7 +26,7 @@ public class MetodoPago {
     private Integer id;
 
     @NotBlank (message = "El nombre es obligatorio")
-    @Size (min = 10, max = 20, message = "El nombre debe tener entre 10 y 20 caracteres")
+    @Size (min = 3, max = 20, message = "El nombre debe tener entre 3 y 20 caracteres")
     private String nombre;
 
     //MetodoPago - Boleta

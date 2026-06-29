@@ -1,104 +1,71 @@
 package topstylehut.bloquecliente.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired; // Import para los logs de Lombok
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
 import topstylehut.bloquecliente.DTO.ClienteDTO;
 import topstylehut.bloquecliente.Model.Cliente;
 import topstylehut.bloquecliente.Repository.ClienteRepository;
 
+@Slf4j
 @Service
-@Transactional
 public class ClienteService {
 
+    @Autowired
+    private ClienteRepository clienteRepository;
 
-@Autowired
-private ClienteRepository clienteRepository;
-
-// Mostrar todos los clientes
-public List<ClienteDTO> obtenerTodos() {
-
-    List<ClienteDTO> clientesDTO = new ArrayList<>();
-
-    for (Cliente cliente : clienteRepository.findAll()) {
-        clientesDTO.add(convertirADTO(cliente));
+    public List<ClienteDTO> obtenerTodos() {
+        log.info("Llamando al servicio para obtener la lista de todos los clientes");
+        List<Cliente> clientes = clienteRepository.findAll();
+        log.info("Se encontraron {} clientes en la base de datos", clientes.size());
+        
+        return clientes.stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
-    return clientesDTO;
-}
-
-// Buscar por ID
-public ClienteDTO buscarPorId(Integer id) {
-
-    Cliente cliente = clienteRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-
-    return convertirADTO(cliente);
-}
-
-// Guardar cliente
-public Cliente guardar(Cliente cliente) {
-    return clienteRepository.save(cliente);
-}
-
-// Actualizar cliente
-public Cliente actualizar(Integer id, Cliente clienteActualizado) {
-
-    Cliente clienteExistente = clienteRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Cliente no existe"));
-
-    if (clienteActualizado.getNombre() != null) {
-        clienteExistente.setNombre(clienteActualizado.getNombre());
+    public ClienteDTO buscarPorId(Integer id) {
+        log.info("Iniciando búsqueda de cliente con ID: {}", id);
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Error: No se encontró al cliente con ID: {}", id);
+                    return new RuntimeException("Cliente no encontrado");
+                });
+        
+        log.info("Cliente encontrado exitosamente: {}", cliente.getNombre());
+        return convertirADTO(cliente);
     }
 
-    if (clienteActualizado.getDireccion() != null) {
-        clienteExistente.setDireccion(clienteActualizado.getDireccion());
+    public ClienteDTO guardar(Cliente cliente) {
+        log.info("Insertando o actualizando un cliente en el sistema");
+        Cliente clienteGuardado = clienteRepository.save(cliente);
+        log.info("Cliente guardado con éxito. ID generado: {}", clienteGuardado.getId());
+        
+        return convertirADTO(clienteGuardado);
     }
 
-    if (clienteActualizado.getComuna() != null) {
-        clienteExistente.setComuna(clienteActualizado.getComuna());
+    public String eliminar(Integer id) {
+        log.info("Petición recibida para eliminar al cliente con ID: {}", id);
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Error al intentar eliminar: Cliente con ID {} no existe", id);
+                    return new RuntimeException("Cliente no encontrado");
+                });
+
+        clienteRepository.delete(cliente);
+        log.info("El cliente '{}' fue eliminado correctamente de la base de datos", cliente.getNombre());
+        return "El cliente '" + cliente.getNombre() + "' ha sido eliminado exitosamente";
     }
 
-    return clienteRepository.save(clienteExistente);
-}
-
-// Eliminar cliente
-public String eliminar(Integer id) {
-
-    Cliente cliente = clienteRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Cliente no existe"));
-
-    clienteRepository.delete(cliente);
-
-    return "El cliente '" + cliente.getNombre() + "' ha sido eliminado exitosamente";
-}
-
-// Convertir Entity a DTO
-public ClienteDTO convertirADTO(Cliente cliente) {
-
-    ClienteDTO dto = new ClienteDTO();
-
-    dto.setId(cliente.getId());
-    dto.setNombre(cliente.getNombre());
-    dto.setDireccion(cliente.getDireccion());
-
-    if (cliente.getComuna() != null) {
-
-        dto.setComuna(cliente.getComuna().getNombre());
-
-        if (cliente.getComuna().getRegion() != null) {
-            dto.setRegion(
-                    cliente.getComuna()
-                            .getRegion()
-                            .getNombre()
-            );
-        }
+    private ClienteDTO convertirADTO(Cliente cliente) {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setId(cliente.getId());
+        dto.setNombre(cliente.getNombre());
+        dto.setDireccion(cliente.getDireccion()); 
+        return dto;
     }
-
-    return dto;
-}
-
-
 }

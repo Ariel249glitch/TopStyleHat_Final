@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/materiales")
+@RequestMapping("/api/v1/material")
 @Tag(name = "Material", description = "Módulo de gestión de materiales")
 @SuppressWarnings("all")
 public class MaterialController {
@@ -47,7 +47,7 @@ public class MaterialController {
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
-            // Llama a tu método: buscarPorId()
+            
             MaterialDTO materialDTO = this.materialService.buscarPorId(id);
             return new ResponseEntity<>(materialDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
@@ -60,11 +60,11 @@ public class MaterialController {
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Material nuevoMaterial) {
         try {
-            // Llama a tu método: guardarMaterial()
+            
             MaterialDTO materialGuardado = this.materialService.guardarMaterial(nuevoMaterial);
-            return new ResponseEntity<>(materialGuardado, HttpStatus.CREATED); // Estado 201
+            return new ResponseEntity<>(materialGuardado, HttpStatus.CREATED); 
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST); // Estado 400
+            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST); 
         }
     }
 

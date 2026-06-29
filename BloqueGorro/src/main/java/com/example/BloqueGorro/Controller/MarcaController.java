@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v1/marcas")
+@RequestMapping("/api/v1/marca")
 @Tag(name = "Marca", description = "Módulo de gestión de marcas")
 
 public class MarcaController {
@@ -31,10 +31,10 @@ public class MarcaController {
     private MarcaService marcaService;
 
     // --- MOSTRAR TODOS LOS REGISTROS ---
-    @Operation(summary = "Listar todas las marcas")
+    @Operation(summary = "Listar todas las marcas", description = "Muestra todas las marcas")
     @GetMapping
     public ResponseEntity<List<MarcaDTO>> listarTodas() {
-        // Llama a tu método: MostrarTodas()
+        
         List<MarcaDTO> lista = this.marcaService.MostrarTodas();
         if (lista.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -43,7 +43,7 @@ public class MarcaController {
     }
 
     // --- BUSCAR REGISTRO POR ID ---
-    @Operation(summary = "Buscar marca por ID")
+    @Operation(summary = "Buscar marca por ID", description = "Busca una marca por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
@@ -56,11 +56,11 @@ public class MarcaController {
     }
 
     // --- GUARDAR UN NUEVO REGISTRO ---
-    @Operation(summary = "Registrar nueva marca")
+    @Operation(summary = "Registrar nueva marca", description = "Registra una nueva marca")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Marca nuevaMarca) {
         try {
-            // Llama a tu método: guardarMarca()
+            
             MarcaDTO marcaGuardada = this.marcaService.guardarMarca(nuevaMarca);
             return new ResponseEntity<>(marcaGuardada, HttpStatus.CREATED); // Estado 201
         } catch (Exception e) {
@@ -69,11 +69,11 @@ public class MarcaController {
     }
 
     // --- ACTUALIZAR REGISTRO EXISTENTE ---
-    @Operation(summary = "Actualizar marca por ID")
+    @Operation(summary = "Actualizar marca por ID", description = "Actualiza una marca existente")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody Marca marca) {
         try {
-            // Llama a tu método: actualizarMarca()
+            
             Marca actualizado = this.marcaService.actualizarMarca(id, marca);
             
             // Como tu convertirADTO en este servicio es privado, armamos el DTO manualmente aquí
@@ -88,11 +88,11 @@ public class MarcaController {
     }
 
     // --- ELIMINAR REGISTRO POR ID ---
-    @Operation(summary = "Eliminar marca por ID")
+    @Operation(summary = "Eliminar marca por ID", description = "Elimina una marca existente")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         
-        String resultado = this.marcaService.EliminarMarca(id);
+        String resultado = marcaService.EliminarMarca(id);
         if (resultado.contains("No se puede eliminar") || resultado.contains("No existe")) {
             return new ResponseEntity<>(resultado, HttpStatus.NOT_FOUND);
         }

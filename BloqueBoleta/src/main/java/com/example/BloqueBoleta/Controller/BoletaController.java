@@ -37,7 +37,8 @@ public class BoletaController {
     }
 
     // Buscar por ID
-    @Operation(summary = "Buscar boleta por ID")
+    @Operation
+    (summary = "Buscar boleta por ID", description = "Busca en las boletas segun su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
 
@@ -56,7 +57,7 @@ public class BoletaController {
     }
 
     // Crear
-    @Operation(summary = "Registrar nueva boleta")
+    @Operation(summary = "Registrar nueva boleta", description = "Registra una boleta nueva en el sistema")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Boleta nuevaBoleta) {
 
@@ -77,7 +78,7 @@ public class BoletaController {
     }
 
     // Actualizar
-    @Operation(summary = "Actualizar boleta")
+    @Operation(summary = "Actualizar boleta", description = "Actualiza una boleta en el sistema")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(
             @PathVariable Integer id,
@@ -102,7 +103,7 @@ public class BoletaController {
     }
 
     // Eliminar
-    @Operation(summary = "Eliminar boleta")
+    @Operation(summary = "Eliminar boleta", description = "Elimina una boleta del sistema")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
 

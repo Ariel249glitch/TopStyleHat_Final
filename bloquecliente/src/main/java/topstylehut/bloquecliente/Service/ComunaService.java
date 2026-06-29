@@ -1,67 +1,70 @@
 package topstylehut.bloquecliente.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; // Import para los logs de Lombok
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import topstylehut.bloquecliente.DTO.ComunaDTO;
 import topstylehut.bloquecliente.Model.Comuna;
 import topstylehut.bloquecliente.Repository.ComunaRepository;
 
-import jakarta.transaction.Transactional;
-
+@Slf4j
 @Service
-@Transactional
 public class ComunaService {
 
     @Autowired
     private ComunaRepository comunaRepository;
 
-    //Mostrar todas las comunas 
-    public List<ComunaDTO> MostrarTodas(){
-        List<ComunaDTO> comunas = new ArrayList<>();
-        for (Comuna comuna : comunaRepository.findAll()) {
-            comunas.add(convertirADTO(comuna));
-        }
-        return comunas;
+    public List<ComunaDTO> obtenerTodas() {
+        log.info("Llamando al servicio para obtener la lista de todas las comunas");
+        List<Comuna> comunas = comunaRepository.findAll();
+        log.info("Se encontraron {} comunas en la base de datos", comunas.size());
+        
+        return comunas.stream()
+                .map(this::convertirADTO)
+                .collect(Collectors.toList());
     }
 
-    //Convertir DTO
-    private ComunaDTO convertirADTO (Comuna comuna){
-        ComunaDTO comunaDTO = new ComunaDTO();
-        comunaDTO.setId(comuna.getId());
-        comunaDTO.setNombre(comuna.getNombre());
-        return comunaDTO;
-    }
-
-    //buscar por id
-    public ComunaDTO buscarPorId(Integer id){
-        Comuna comuna = comunaRepository.findById(id).orElseThrow(() -> new RuntimeException("Comuna no encontrada"));
+    public ComunaDTO buscarPorId(Integer id) {
+        log.info("Iniciando búsqueda de comuna con ID: {}", id);
+        Comuna comuna = comunaRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Error: No se encontró la comuna con ID: {}", id);
+                    return new RuntimeException("Comuna no encontrada");
+                });
+        
+        log.info("Comuna encontrada exitosamente: {}", comuna.getNombre());
         return convertirADTO(comuna);
     }
 
-    //Guardar Comuna
-    public ComunaDTO guardarComuna(Comuna nuevoComuna){
-        Comuna comunaGuardada = comunaRepository.save(nuevoComuna);
+    public ComunaDTO guardar(Comuna comuna) {
+        log.info("Insertando o actualizando una comuna en el sistema");
+        Comuna comunaGuardada = comunaRepository.save(comuna);
+        log.info("Comuna guardada con éxito. ID generado: {}", comunaGuardada.getId());
+        
         return convertirADTO(comunaGuardada);
     }
 
-    //Actualizar Comuna
-    public Comuna actualizarComu(Integer id, Comuna comuna){
-        Comuna Comu = comunaRepository.findById(id).orElseThrow(() ->  new RuntimeException("La comuna no existe"));
-        if (comuna.getNombre() != null) {
-            Comu.setNombre(comuna.getNombre());
-        }
-        return comunaRepository.save(Comu);
+    public String eliminar(Integer id) {
+        log.info("Petición recibida para eliminar la comuna con ID: {}", id);
+        Comuna comuna = comunaRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.error("Error al intentar eliminar: Comuna con ID {} no existe", id);
+                    return new RuntimeException("Comuna no encontrada");
+                });
+
+        comunaRepository.delete(comuna);
+        log.info("La comuna '{}' fue eliminada correctamente de la base de datos", comuna.getNombre());
+        return "La comuna '" + comuna.getNombre() + "' ha sido eliminado exitosamente";
     }
 
-    //Eliminar
-    public String EliminarComuna(Integer id){
-        Comuna comuna = comunaRepository.findById(id).orElseThrow(() -> new RuntimeException("La comuna no existe"));
-        comunaRepository.delete(comuna);
-        return "Comuna Eliminada";
+    private ComunaDTO convertirADTO(Comuna comuna) {
+        ComunaDTO dto = new ComunaDTO();
+        dto.setId(comuna.getId());
+        dto.setNombre(comuna.getNombre());
+        return dto;
     }
-    
 }

@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Marcas")
+@Table(name = "marca")
 
 
 public class Marca {
@@ -30,7 +30,7 @@ public class Marca {
 
     
     @NotBlank (message = "El nombre es obligatorio")
-    @Size (min = 10, max = 50, message = "El nombre debe tener entre 10 y 50 caracteres")
+    @Size (min = 10, max = 25, message = "El nombre debe tener entre 10 y 25 caracteres")
     private String nombre;
 
 

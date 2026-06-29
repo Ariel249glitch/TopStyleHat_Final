@@ -11,9 +11,11 @@ import com.example.BloqueGorro.Model.Gorros;
 import com.example.BloqueGorro.Repository.GorrosRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class GorrosService {
 
     @Autowired
@@ -21,6 +23,7 @@ public class GorrosService {
 
     //Mostrar todos
     public List<GorrosDTO> obtenerTodos(){
+        log.info("Obteniendo todos los gorros");
         List<GorrosDTO> hats = new ArrayList<>();
         for (Gorros gorros : gorrosRepository.findAll()){
             hats.add(convertirADTO(gorros));
@@ -32,45 +35,30 @@ public class GorrosService {
     private GorrosDTO convertirADTO (Gorros gorros){
         GorrosDTO gorrosDTO = new GorrosDTO();
         gorrosDTO.setId(gorros.getId());
-        gorrosDTO.setNombre(gorros.getNombre());
-        gorrosDTO.setTalla(gorros.getTalla());
-        gorrosDTO.setPrecio(gorros.getPrecio());
         return gorrosDTO;
     }
 
     //Buscar por id
     public GorrosDTO buscarPorId(Integer id){
+        log.info("Buscando gorro por ID: {}", id);
         Gorros gorros = gorrosRepository.findById(id).orElseThrow(() -> new RuntimeException( "Gorro no encontrado"));
         return convertirADTO(gorros);
     }
 
     //Guardar Gorro
     public GorrosDTO guardarGorros (Gorros NuevosGorros){
+        log.info("Guardando nuevos gorros");
         Gorros gorrosGuardados = gorrosRepository.save(NuevosGorros);
         return convertirADTO(gorrosGuardados);
     }
 
-    //Actualizar
-    public Gorros ActualizarGorros (Integer id, Gorros gorros){
-        Gorros hats = gorrosRepository.findById(id).orElseThrow(() -> new RuntimeException("no existe!"));
-        if (gorros.getNombre() != null){
-            hats.setNombre(gorros.getNombre());
-        }
-        if (gorros.getTalla() != null){
-            hats.setTalla(gorros.getTalla());
-        }
-        if (gorros.getPrecio() != null){
-            hats.setPrecio(gorros.getPrecio());
-        }
-        return gorrosRepository.save(hats);
-    }
-
     //Eliminar
     public String Eliminar(Integer id){
+        log.info("Eliminando gorro con ID: {}", id);
         try {
             Gorros gorros = gorrosRepository.findById(id).orElseThrow(() -> new RuntimeException("!Imposible de eliminar! El gorro con id" + id +"No existe"));
             gorrosRepository.delete(gorros);
-            return "El gorro '" + gorros.getNombre() + "' ha sido eliminado";
+            return "El gorro ha sido eliminado";
         } catch (RuntimeException e) {
             return e.getMessage();
         }

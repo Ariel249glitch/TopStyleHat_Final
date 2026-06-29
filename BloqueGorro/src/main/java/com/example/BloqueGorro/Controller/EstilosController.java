@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +17,7 @@ import com.example.BloqueGorro.DTO.EstilosDTO;
 import com.example.BloqueGorro.Model.Estilos;
 import com.example.BloqueGorro.Service.EstilosService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 
@@ -29,6 +29,7 @@ public class EstilosController {
     EstilosService estilosService;
 
     //Mostrar todos los tipos 
+    @Operation(summary = "Listar todos los estilos")
     @GetMapping
     public ResponseEntity<?> TodosLosEstilos(){
         List<EstilosDTO> estiloss = estilosService.MostrarTodas();
@@ -39,6 +40,7 @@ public class EstilosController {
     }
 
     //Agregar
+    @Operation(summary = "Agregar estilos")
     @PostMapping
     public ResponseEntity<?> agregarEsti(@Valid @RequestBody Estilos estilos){
         try {
@@ -48,18 +50,8 @@ public class EstilosController {
         }
     }
 
-    //Actualizar
-    @PutMapping("/id")
-    public ResponseEntity<Estilos> actualizarEsti(@PathVariable Integer id, @RequestBody Estilos Esti){
-        try {
-            Estilos newEsti = estilosService.actualizarEstis(id, Esti);
-            return new ResponseEntity<>(newEsti, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     //Eliminar
+    @Operation(summary = "Eliminar Estilos")
     @DeleteMapping
     public ResponseEntity<String> EliminarEstilos(@PathVariable Integer id){
         String resultado = estilosService.EliminarEstilos(id);

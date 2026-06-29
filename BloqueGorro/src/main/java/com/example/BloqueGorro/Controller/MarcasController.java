@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,19 +18,21 @@ import com.example.BloqueGorro.DTO.MarcasDTO;
 import com.example.BloqueGorro.Model.Marcas;
 import com.example.BloqueGorro.Service.MarcasService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 
 
 
 @RestController
-@RequestMapping("/api/v1/Marcas")
+@RequestMapping("/api/v1/marcas")
 public class MarcasController {
 
     @Autowired
     MarcasService marcasService;
 
      //Mostrar todas las Marcas
+    @Operation(summary = "Listar todas las marcas")
     @GetMapping
     public ResponseEntity<?> MarcasTodas(){
         List<MarcasDTO> marcas = marcasService.MostrarTodas();
@@ -40,6 +43,7 @@ public class MarcasController {
     }
 
     //Buscar por id
+    @Operation(summary = "Buscar marcas por ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> BuscarPorId(@PathVariable Integer id){
         try {
@@ -51,6 +55,7 @@ public class MarcasController {
     }
 
     //Agregar
+    @Operation(summary = "Agregar nueva Marca")
     @PostMapping
     public ResponseEntity<?> agregarMarcas(@Valid @RequestBody Marcas marcas){
         try {
@@ -60,12 +65,17 @@ public class MarcasController {
         }
     }
 
-    //Actualizar
-    
-    
-
     //Eliminar
-    
+    @Operation(summary = "Eliminar Marca por ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarbrands(@PathVariable Integer id){
+        try {
+            MarcasDTO resultado = marcasService.eliminarMarcas(id);
+            return new ResponseEntity<>(resultado, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
 

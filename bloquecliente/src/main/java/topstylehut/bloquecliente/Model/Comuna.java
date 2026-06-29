@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Comunas")
+@Table(name = "comunas")
 
 public class Comuna {
 

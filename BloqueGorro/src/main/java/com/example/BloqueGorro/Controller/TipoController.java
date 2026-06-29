@@ -30,68 +30,64 @@ public class TipoController {
     @Autowired
     private TipoService tipoService;
 
-    // --- MOSTRAR TODOS LOS REGISTROS ---
+    //mostrar todo
     @Operation(summary = "Listar todos los tipos")
     @GetMapping
     public ResponseEntity<List<TipoDTO>> listarTodas() {
-        // Llama a tu método: MostrarTodas()
+        
         List<TipoDTO> lista = this.tipoService.MostrarTodas();
         if (lista.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Estado 204: Lista vacía
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         }
-        return new ResponseEntity<>(lista, HttpStatus.OK); // Estado 200: Todo bien
+        return new ResponseEntity<>(lista, HttpStatus.OK); 
     }
 
-    // --- BUSCAR REGISTRO POR ID ---
+    //buscar por id
     @Operation(summary = "Buscar tipo por ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
-            // Llama a tu método: buscarPorId()
+            
             TipoDTO tipoDTO = this.tipoService.buscarPorId(id);
             return new ResponseEntity<>(tipoDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Tipo no encontrado", HttpStatus.NOT_FOUND); // Estado 404
+            return new ResponseEntity<>("Tipo no encontrado", HttpStatus.NOT_FOUND);
         }
     }
 
-    // --- GUARDAR UN NUEVO REGISTRO ---
+    //Guardar
     @Operation(summary = "Registrar nuevo tipo")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Tipo nuevoTipo) {
         try {
-            // Llama a tu método: guardarTipo()
             TipoDTO tipoGuardado = this.tipoService.guardarTipo(nuevoTipo);
-            return new ResponseEntity<>(tipoGuardado, HttpStatus.CREATED); // Estado 201: Creado
+            return new ResponseEntity<>(tipoGuardado, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST); // Estado 400
+            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST);
         }
     }
 
-    // --- ACTUALIZAR REGISTRO EXISTENTE ---
+    //Actualizar
     @Operation(summary = "Actualizar tipo por ID")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody Tipo tipo) {
         try {
-            // Llama a tu método: actualizarTipo()
-            Tipo actualizado = this.tipoService.actualizarTipo(id, tipo);
-            
-            // Como tu convertirADTO en este servicio es privado, creamos el DTO de forma manual aquí
-            TipoDTO resultadoDTO = new TipoDTO();
-            resultadoDTO.setId(actualizado.getId());
-            resultadoDTO.setNombre(actualizado.getNombre());
-            
-            return new ResponseEntity<>(resultadoDTO, HttpStatus.OK);
+
+            Tipo actualizado = tipoService.actualizarTipo(id, tipo);
+
+            return new ResponseEntity<>(
+                    tipoService.convertirADTO(actualizado),
+                    HttpStatus.OK);
+
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    // --- ELIMINAR REGISTRO POR ID ---
+    //Eliminar
     @Operation(summary = "Eliminar tipo por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
-        // Llama a tu método: EliminarTipo()
         String resultado = this.tipoService.EliminarTipo(id);
         if (resultado.contains("No se puede eliminar") || resultado.contains("No existe")) {
             return new ResponseEntity<>(resultado, HttpStatus.NOT_FOUND);

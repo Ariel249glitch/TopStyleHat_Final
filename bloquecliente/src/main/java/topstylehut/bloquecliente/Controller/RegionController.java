@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import topstylehut.bloquecliente.DTO.RegionDTO;
-import topstylehut.bloquecliente.Model.Region;
-import topstylehut.bloquecliente.Service.Regionservice;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import topstylehut.bloquecliente.DTO.RegionDTO; // Mantiene tu nombre exacto de clase de servicio
+import topstylehut.bloquecliente.Model.Region;
+import topstylehut.bloquecliente.Service.Regionservice;
 
 @RestController
 @RequestMapping("/api/v1/regiones")
@@ -30,56 +30,47 @@ public class RegionController {
     private Regionservice regionService;
 
     // --- MOSTRAR TODOS LOS REGISTROS ---
-    @Operation(summary = "Listar todas las regiones")
+    @Operation(summary = "Listar todas las regiones", description = "Muestra todas las regiones")
     @GetMapping
     public ResponseEntity<List<RegionDTO>> listarTodas() {
-        
-        List<RegionDTO> lista = this.regionService.MostrarTodas();
+        List<RegionDTO> lista = this.regionService.obtenerTodas(); // Adaptado a obtenerTodas()
         if (lista.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // Estado 204
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(lista, HttpStatus.OK); // Estado 200
+        return new ResponseEntity<>(lista, HttpStatus.OK);
     }
 
     // --- BUSCAR REGISTRO POR ID ---
-    @Operation(summary = "Buscar región por ID")
+    @Operation(summary = "Buscar región por ID", description = "Busca una region por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
-            
             RegionDTO regionDTO = this.regionService.buscarPorId(id);
             return new ResponseEntity<>(regionDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Región no encontrada", HttpStatus.NOT_FOUND); // Estado 404
+            return new ResponseEntity<>("Región no encontrada", HttpStatus.NOT_FOUND);
         }
     }
 
     // --- GUARDAR UN NUEVO REGISTRO ---
-    @Operation(summary = "Registrar nueva región")
+    @Operation(summary = "Registrar nueva región",description = "Registra una nueva region en el sistema")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Region nuevaRegion) {
         try {
-            
-            RegionDTO regionGuardada = this.regionService.guardarRegion(nuevaRegion);
-            return new ResponseEntity<>(regionGuardada, HttpStatus.CREATED); // Estado 201
+            RegionDTO regionGuardada = this.regionService.guardar(nuevaRegion); // Adaptado a guardar()
+            return new ResponseEntity<>(regionGuardada, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST); // Estado 400
+            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST);
         }
     }
 
     // --- ACTUALIZAR REGISTRO EXISTENTE ---
-    @Operation(summary = "Actualizar región por ID")
+    @Operation(summary = "Actualizar región por ID", description = "Actualiza una region por su ID")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody Region region) {
         try {
-            
-            Region actualizado = this.regionService.actualizarRegion(id, region);
-            
-            
-            RegionDTO resultadoDTO = new RegionDTO();
-            resultadoDTO.setId(actualizado.getId());
-            resultadoDTO.setNombre(actualizado.getNombre());
-            
+            region.setId(id);
+            RegionDTO resultadoDTO = this.regionService.guardar(region); // Sincronizado mediante guardar()
             return new ResponseEntity<>(resultadoDTO, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -87,15 +78,13 @@ public class RegionController {
     }
 
     // --- ELIMINAR REGISTRO POR ID ---
-    @Operation(summary = "Eliminar región por ID")
+    @Operation(summary = "Eliminar región por ID", description = "Elimina una region del sistema")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         try {
-            
-            String resultado = this.regionService.EliminarRegion(id);
+            String resultado = this.regionService.eliminar(id); // Adaptado a eliminar()
             return new ResponseEntity<>(resultado, HttpStatus.OK);
         } catch (RuntimeException e) {
-            
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

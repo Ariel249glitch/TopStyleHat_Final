@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/estilos")
-@Tag(name = "Estilo", description = "Módulo de gestión de estilos")
 @SuppressWarnings("all")
 public class EstiloController {
 
@@ -31,7 +30,7 @@ public class EstiloController {
     private EstiloService estiloService;
 
     // --- MOSTRAR TODOS LOS REGISTROS ---
-    @Operation(summary = "Listar todos los estilos")
+    @Operation(summary = "Listar todos los estilos", description = "Muestra todos los estilos")
     @GetMapping
     public ResponseEntity<List<EstiloDTO>> listarTodas() {
         // Llama a tu método: MostrarTodas()
@@ -43,7 +42,7 @@ public class EstiloController {
     }
 
     // --- BUSCAR REGISTRO POR ID ---
-    @Operation(summary = "Buscar estilo por ID")
+    @Operation(summary = "Buscar estilo por ID", description = "busca un estilo por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
         try {
@@ -55,40 +54,43 @@ public class EstiloController {
         }
     }
 
-    // --- GUARDAR UN NUEVO REGISTRO ---
-    @Operation(summary = "Registrar nuevo estilo")
+    @Operation(summary = "Registrar nuevo estilo", description = "Agrega un nuevo estilo al sistema")
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Estilo nuevoEstilo) {
+    public ResponseEntity<?> crear(@RequestBody EstiloDTO nuevoEstilo) {
         try {
-            // Llama a tu método: guardarEstilo()
-            EstiloDTO estiloGuardado = this.estiloService.guardarEstilo(nuevoEstilo);
-            return new ResponseEntity<>(estiloGuardado, HttpStatus.CREATED); // Estado 201
+
+            return new ResponseEntity<>(
+                    estiloService.guardarEstilo(nuevoEstilo),
+                    HttpStatus.CREATED);
+
         } catch (Exception e) {
-            return new ResponseEntity<>("Error al guardar", HttpStatus.BAD_REQUEST); // Estado 400
+
+            return new ResponseEntity<>(
+                    "Error al guardar estilo",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
-    // --- ACTUALIZAR REGISTRO EXISTENTE ---
-    @Operation(summary = "Actualizar estilo por ID")
+    // actualizar
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(@PathVariable Integer id, @RequestBody Estilo estilo) {
         try {
-            // Llama a tu método exacto: actualizarEsti()
-            Estilo actualizado = this.estiloService.actualizarEsti(id, estilo);
-            
-            // Armamos el DTO de forma manual ya que tu convertidor es privado en el servicio
-            EstiloDTO resultadoDTO = new EstiloDTO();
-            resultadoDTO.setId(actualizado.getId());
-            resultadoDTO.setNombre(actualizado.getNombre());
-            
-            return new ResponseEntity<>(resultadoDTO, HttpStatus.OK);
+
+            EstiloDTO dto = new EstiloDTO();
+            dto.setId(estilo.getId());
+            dto.setNombre(estilo.getNombre());
+
+            EstiloDTO actualizado = estiloService.actualizarEsti(id, dto);
+
+            return new ResponseEntity<>(actualizado, HttpStatus.OK);
+
         } catch (RuntimeException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     // --- ELIMINAR REGISTRO POR ID ---
-    @Operation(summary = "Eliminar estilo por ID")
+    @Operation(summary = "Eliminar estilo por ID", description = "Eliminar estilo por su ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
         // Llama a tu método: EliminarEstilo()

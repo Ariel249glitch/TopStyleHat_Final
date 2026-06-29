@@ -11,9 +11,11 @@ import com.example.BloqueGorro.Model.Gorro;
 import com.example.BloqueGorro.Repository.GorroRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class GorroService {
 
     @Autowired
@@ -21,6 +23,7 @@ public class GorroService {
 
     //Mostrar todos
     public List<GorroDTO> obtenerTodos(){
+        log.info("Obteniendo todos los gorros");
         List<GorroDTO> gorros = new ArrayList<>();
         for (Gorro gorro : gorroRepository.findAll()){
             gorros.add(convertirADTO(gorro));
@@ -40,18 +43,23 @@ public class GorroService {
 
     //Buscar por id
     public GorroDTO buscarPorId(Integer id){
+        log.info("Buscando gorro por ID: {}", id);
         Gorro gorro = gorroRepository.findById(id).orElseThrow(() -> new RuntimeException( "Gorro no encontrado"));
         return convertirADTO(gorro);
     }
 
+
+
     //Guardar Gorro
     public GorroDTO guardarGorro (Gorro NuevoGorro){
+        log.info("Guardando nuevo gorro");
         Gorro gorroGuardado = gorroRepository.save(NuevoGorro);
         return convertirADTO(gorroGuardado);
     }
 
     //Actualizar
     public Gorro ActualizarGorro (Integer id, Gorro gorro){
+        log.info("Actualizando gorro con ID: {}", id);
         Gorro hat = gorroRepository.findById(id).orElseThrow(() -> new RuntimeException("El gorro no existe!"));
         if (gorro.getNombre() != null){
             hat.setNombre(gorro.getNombre());
@@ -67,6 +75,7 @@ public class GorroService {
 
     //Eliminar
     public String Eliminar(Integer id){
+        log.info("Eliminando gorro con ID: {}", id);
         try {
             Gorro gorro = gorroRepository.findById(id).orElseThrow(() -> new RuntimeException("!Imposible de eliminar! El gorro con id" + id +"No existe"));
             gorroRepository.delete(gorro);

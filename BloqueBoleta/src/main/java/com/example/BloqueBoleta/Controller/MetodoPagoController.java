@@ -23,7 +23,7 @@ public class MetodoPagoController {
     private MetodoPagoService metodoPagoService;
 
     // Mostrar todos
-    @Operation(summary = "Listar todos los métodos de pago")
+    @Operation(summary = "Listar todos los métodos de pago", description = "Lista todos los metodos de pago")
     @GetMapping
     public ResponseEntity<List<MetodoPagoDTO>> listarTodos() {
 
@@ -37,7 +37,7 @@ public class MetodoPagoController {
     }
 
     // Buscar por ID
-    @Operation(summary = "Buscar método de pago por ID")
+    @Operation(summary = "Buscar método de pago por ID", description = "Busca una forma de pago por su ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Integer id) {
 
@@ -55,18 +55,14 @@ public class MetodoPagoController {
         }
     }
 
-    // Crear
-    @Operation(summary = "Registrar método de pago")
+    // Agregar
+    @Operation(summary = "Registrar método de pago", description = "Registra un nuevo metodo de pago")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody MetodoPago metodoPago) {
 
         try {
 
-            MetodoPago guardado = metodoPagoService.guardar(metodoPago);
-
-            MetodoPagoDTO dto = metodoPagoService.convertirADTO(guardado);
-
-            return new ResponseEntity<>(dto, HttpStatus.CREATED);
+            return new ResponseEntity<>(metodoPagoService.guardar(metodoPago), HttpStatus.CREATED);
 
         } catch (Exception e) {
 
@@ -77,7 +73,7 @@ public class MetodoPagoController {
     }
 
     // Actualizar
-    @Operation(summary = "Actualizar método de pago")
+    @Operation(summary = "Actualizar método de pago", description = "Actualiza una forma de pago")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizar(
             @PathVariable Integer id,
@@ -102,7 +98,7 @@ public class MetodoPagoController {
     }
 
     // Eliminar
-    @Operation(summary = "Eliminar método de pago")
+    @Operation(summary = "Eliminar método de pago", description = "Elimina una forma de pago")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(@PathVariable Integer id) {
 

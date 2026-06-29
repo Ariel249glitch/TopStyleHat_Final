@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Regiones")
+@Table(name = "regiones")
 public class Region {
     
     @Id
@@ -27,7 +27,7 @@ public class Region {
     private Integer id;
     
     @NotBlank (message = "El nombre es obligatorio")
-    @Size (min = 10, max = 50, message = "El nombre debe tener entre 10 y 50 caracteres")
+    @Size (min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     private String nombre;
 
     //Region - Cliente

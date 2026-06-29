@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "colores_puente")
+@Table(name = "gorro_color")
 public class Colores {
 
     @Id

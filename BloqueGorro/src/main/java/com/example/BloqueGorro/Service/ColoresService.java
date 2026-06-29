@@ -15,12 +15,14 @@ import com.example.BloqueGorro.Repository.ColoresRepository;
 import com.example.BloqueGorro.Repository.GorroRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 
 
 
 @Service
 @Transactional
+@Slf4j
 public class ColoresService {
 
     @Autowired
@@ -33,6 +35,7 @@ public class ColoresService {
     private ColorRepository colorRepository;
 
     public List<ColoresDTO> obtenerTodas() {
+        log.info("Obteniendo todas las relaciones de colores y gorros");
         List<ColoresDTO> relacionesDTO = new ArrayList<>();
         for (Colores relacion : coloresRepository.findAll()) {
             relacionesDTO.add(convertirADTO(relacion));
@@ -41,28 +44,14 @@ public class ColoresService {
     }
 
     public ColoresDTO buscarPorId(Integer id) {
+        log.info("Buscando relación de colores y gorros por ID: {}", id);
         Colores relacion = coloresRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Relación no encontrada"));
         return convertirADTO(relacion);
     }
 
-    public List<ColoresDTO> buscarPorGorro(Integer gorroId) {
-        List<ColoresDTO> relacionesDTO = new ArrayList<>();
-        for (Colores relacion : coloresRepository.findByGorroId(gorroId)) {
-            relacionesDTO.add(convertirADTO(relacion));
-        }
-        return relacionesDTO;
-    }
-
-    public List<ColoresDTO> buscarPorColor(Integer colorId) {
-        List<ColoresDTO> relacionesDTO = new ArrayList<>();
-        for (Colores relacion : coloresRepository.findByColorId(colorId)) {
-            relacionesDTO.add(convertirADTO(relacion));
-        }
-        return relacionesDTO;
-    }
-
     public ColoresDTO asignarColorAGorro(Integer gorroId, Integer colorId) {
+        log.info("Asignando color con ID {} al gorro con ID {}", colorId, gorroId);
         Gorro gorro = gorroRepository.findById(gorroId)
             .orElseThrow(() -> new RuntimeException("Gorro no encontrado"));
         
@@ -78,6 +67,7 @@ public class ColoresService {
     }
 
     public String eliminarRelacion(Integer id) {
+        log.info("Eliminando relación de colores y gorros por ID: {}", id);
         try {
             Colores relacion = coloresRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Relación no existe"));
@@ -86,6 +76,24 @@ public class ColoresService {
         } catch (RuntimeException e) {
             return e.getMessage();
         }
+    }
+
+    public List<ColoresDTO> buscarPorGorro(Integer gorroId) {
+        log.info("Buscando relaciones de colores y gorros por ID de gorro: {}", gorroId);
+        List<ColoresDTO> relacionesDTO = new ArrayList<>();
+        for (Colores relacion : coloresRepository.findByGorroId(gorroId)) {
+            relacionesDTO.add(convertirADTO(relacion));
+        }
+        return relacionesDTO;
+    }
+
+    public List<ColoresDTO> buscarPorColor(Integer colorId) {
+        log.info("Buscando relaciones de colores y gorros por ID de color: {}", colorId);
+        List<ColoresDTO> relacionesDTO = new ArrayList<>();
+        for (Colores relacion : coloresRepository.findByColorId(colorId)) {
+            relacionesDTO.add(convertirADTO(relacion));
+        }
+        return relacionesDTO;
     }
 
     private ColoresDTO convertirADTO(Colores relacion) {

@@ -11,11 +11,13 @@ import com.example.BloqueGorro.Model.Color;
 import com.example.BloqueGorro.Repository.ColorRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 
 
 @Service
 @Transactional
+@Slf4j
 public class ColorService {
 
     @Autowired
@@ -23,6 +25,7 @@ public class ColorService {
 
     // Mostrar todos los colores
     public List<ColorDTO> obtenerTodos() {
+        log.info("Obteniendo todos los colores");
         List<ColorDTO> coloresDTO = new ArrayList<>();
         for (Color color : colorRepository.findAll()) {
             coloresDTO.add(convertirADTO(color));
@@ -32,18 +35,22 @@ public class ColorService {
 
     // Buscar por ID
     public ColorDTO buscarPorId(Integer id) {
+        log.info("Buscando color por ID: {}", id);
         Color color = colorRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Color no encontrado"));
         return convertirADTO(color);
     }
 
     // Guardar color
-    public Color guardar(Color color) {
-        return colorRepository.save(color);
+    public ColorDTO guardar(Color color) {
+        log.info("Guardando color: {}", color.getNombre());
+        Color nuevoColor = colorRepository.save(color);
+        return convertirADTO(nuevoColor);
     }
 
     // Actualizar color
     public Color actualizar(Integer id, Color colorActualizado) {
+        log.info("Actualizando color por ID: {}", id);
         Color colorExistente = colorRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Color no existe"));
         
@@ -55,6 +62,7 @@ public class ColorService {
 
     // Eliminar color
     public String eliminar(Integer id) {
+        log.info("Eliminando color por ID: {}", id);
         try {
             Color color = colorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Color no existe"));
@@ -66,7 +74,7 @@ public class ColorService {
     }
 
     // Convertir Entity a DTO
-    private ColorDTO convertirADTO(Color color) {
+    public ColorDTO convertirADTO(Color color) {
         ColorDTO dto = new ColorDTO();
         dto.setId(color.getId());
         dto.setNombre(color.getNombre());

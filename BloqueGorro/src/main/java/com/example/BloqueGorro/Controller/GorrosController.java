@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +17,7 @@ import com.example.BloqueGorro.DTO.GorrosDTO;
 import com.example.BloqueGorro.Model.Gorros;
 import com.example.BloqueGorro.Service.GorrosService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,6 +29,7 @@ public class GorrosController {
     private GorrosService gorrosService;
 
     //Mostrar todos
+    @Operation(summary = "Listar todos los gorros")
     @GetMapping
     public ResponseEntity<?> TodosLosGorros(){
         List <GorrosDTO> gorros = gorrosService.obtenerTodos();
@@ -39,6 +40,7 @@ public class GorrosController {
     }
 
     //Buscar por id
+    @Operation(summary = "Buscar gorro por ID")
     @GetMapping("/{id}")
     public ResponseEntity<?> BuscarPorId(@PathVariable Integer id){
         try {
@@ -50,6 +52,7 @@ public class GorrosController {
     }
 
     //Guardar
+    @Operation(summary = "Agregar un nuevo gorro")
     @PostMapping
     public ResponseEntity<?> agregarGorros(@Valid @RequestBody Gorros gorros){
         try {
@@ -59,19 +62,9 @@ public class GorrosController {
         }
     }
 
-    //Actualizar
-    @PutMapping("/id")
-    public ResponseEntity<Gorros> actualizarGorros (@PathVariable Integer id, @RequestBody Gorros hats){
-        try {
-            Gorros newHats = gorrosService.ActualizarGorros(id, hats);
-            return new ResponseEntity<>(newHats, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     //Eliminar
 
+    @Operation(summary = "Eliminar gorro")
     @DeleteMapping("/id")
     public ResponseEntity<String> eliminarGorro(@PathVariable Integer id){
         String resultado = gorrosService.Eliminar(id);
