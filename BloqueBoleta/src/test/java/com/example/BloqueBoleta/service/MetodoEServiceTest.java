@@ -1,7 +1,10 @@
-package com.example.BloqueBoleta.Service;
+package com.example.BloqueBoleta.service;
 
+import com.example.BloqueBoleta.DTO.MetodoEDTO;
 import com.example.BloqueBoleta.Model.MetodoE;
 import com.example.BloqueBoleta.Repository.MetodoERepository;
+import com.example.BloqueBoleta.Service.MetodoEService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -42,4 +42,15 @@ public class MetodoE {
     // Relación con Boleta
     @OneToMany(mappedBy = "metodoEnvio")
     private List<Boleta> boletas;
+
+    public void setTiempo(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setTiempo'");
+    }
+
+    public void setTiempo(String tiempo2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setTiempo'");
+    }
+
 }

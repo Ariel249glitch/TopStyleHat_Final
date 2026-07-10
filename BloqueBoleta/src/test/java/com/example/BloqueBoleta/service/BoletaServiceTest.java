@@ -1,4 +1,4 @@
-package com.example.BloqueBoleta.Service;
+package com.example.BloqueBoleta.service;
 
 import com.example.BloqueBoleta.DTO.BoletaDTO;
 import com.example.BloqueBoleta.DTO.ClienteDTOExterno;
@@ -8,61 +8,83 @@ import com.example.BloqueBoleta.Model.MetodoE;
 import com.example.BloqueBoleta.Model.MetodoPago;
 import com.example.BloqueBoleta.Repository.BoletaRepository;
 import com.example.BloqueBoleta.Service.BoletaService;
+import com.example.BloqueBoleta.Service.BoletaValidaciones;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class BoletaServiceTest {
 
-    @Autowired
-    private BoletaService boletaService;
-
-    @MockBean
+    @Mock
     private BoletaRepository boletaRepository;
 
-    @MockBean
+    @Mock
     private BoletaValidaciones boletaValidaciones;
 
-    @Test
-    public void testObtenerTodas() {
-        // Crear datos de prueba
-        MetodoPago mp = new MetodoPago();
+    @InjectMocks
+    private BoletaService boletaService;
+
+    private MetodoPago mp;
+    private MetodoE me;
+    private Boleta b1;
+    private Boleta b2;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        
+        // Inicializar datos comunes
+        mp = new MetodoPago();
         mp.setId(1);
         mp.setNombre("Efectivo");
-        MetodoE me = new MetodoE();
+        
+        me = new MetodoE();
         me.setId(1);
         me.setNombre("Envío Express");
-
-        Boleta b1 = new Boleta();
+        
+        b1 = new Boleta();
         b1.setId(1);
         b1.setFecha(LocalDate.now());
         b1.setMetodoPago(mp);
         b1.setMetodoEnvio(me);
         b1.setClienteId(10);
         b1.setGorroId(20);
-
-        Boleta b2 = new Boleta();
+        
+        b2 = new Boleta();
         b2.setId(2);
         b2.setFecha(LocalDate.now());
         b2.setMetodoPago(mp);
         b2.setMetodoEnvio(me);
         b2.setClienteId(11);
         b2.setGorroId(21);
+    }
 
+    @Test
+    public void testObtenerTodas() {
+        // Configurar mock del repositorio
         when(boletaRepository.findAll()).thenReturn(Arrays.asList(b1, b2));
 
-        // Mockear las validaciones externas
+        // Configurar mocks de validaciones externas
         ClienteDTOExterno cliente1 = new ClienteDTOExterno();
         cliente1.setId(10);
         cliente1.setNombre("Juan");
@@ -81,36 +103,25 @@ public class BoletaServiceTest {
         when(boletaValidaciones.obtenerCliente(11)).thenReturn(cliente2);
         when(boletaValidaciones.obtenerGorro(21)).thenReturn(gorro2);
 
-        // Ejecutar
+        // Ejecutar método a probar
         List<BoletaDTO> resultados = boletaService.obtenerTodas();
 
-        // Verificar
+        // Verificar resultados
         assertNotNull(resultados);
         assertEquals(2, resultados.size());
         assertEquals("Juan", resultados.get(0).getCliente().getNombre());
         assertEquals("Gorro B", resultados.get(1).getGorro().getNombre());
+        
+        // Verificar que se llamó al repositorio
         verify(boletaRepository, times(1)).findAll();
     }
 
     @Test
     public void testBuscarPorIdExistente() {
-        MetodoPago mp = new MetodoPago();
-        mp.setId(1);
-        mp.setNombre("Efectivo");
-        MetodoE me = new MetodoE();
-        me.setId(1);
-        me.setNombre("Envío Express");
+        // Configurar mock del repositorio
+        when(boletaRepository.findById(1)).thenReturn(Optional.of(b1));
 
-        Boleta b = new Boleta();
-        b.setId(1);
-        b.setFecha(LocalDate.now());
-        b.setMetodoPago(mp);
-        b.setMetodoEnvio(me);
-        b.setClienteId(10);
-        b.setGorroId(20);
-
-        when(boletaRepository.findById(1)).thenReturn(Optional.of(b));
-
+        // Configurar mocks de validaciones externas
         ClienteDTOExterno cliente = new ClienteDTOExterno();
         cliente.setId(10);
         cliente.setNombre("Juan");
@@ -120,32 +131,34 @@ public class BoletaServiceTest {
         when(boletaValidaciones.obtenerCliente(10)).thenReturn(cliente);
         when(boletaValidaciones.obtenerGorro(20)).thenReturn(gorro);
 
+        // Ejecutar método a probar
         BoletaDTO dto = boletaService.buscarPorId(1);
 
+        // Verificar resultados
         assertNotNull(dto);
         assertEquals(1, dto.getId());
         assertEquals("Efectivo", dto.getMetodoPago());
         assertEquals("Envío Express", dto.getMetodoEnvio());
+        
+        // Verificar que se llamó al repositorio
         verify(boletaRepository, times(1)).findById(1);
     }
 
     @Test
     public void testBuscarPorIdNoExistente() {
+        // Configurar mock del repositorio
         when(boletaRepository.findById(99)).thenReturn(Optional.empty());
 
+        // Ejecutar y verificar que lanza excepción
         assertThrows(RuntimeException.class, () -> boletaService.buscarPorId(99));
+        
+        // Verificar que se llamó al repositorio
         verify(boletaRepository, times(1)).findById(99);
     }
 
     @Test
     public void testGuardar() {
-        MetodoPago mp = new MetodoPago();
-        mp.setId(1);
-        mp.setNombre("Efectivo");
-        MetodoE me = new MetodoE();
-        me.setId(1);
-        me.setNombre("Envío Express");
-
+        // Crear boleta para guardar
         Boleta b = new Boleta();
         b.setFecha(LocalDate.now());
         b.setMetodoPago(mp);
@@ -153,6 +166,7 @@ public class BoletaServiceTest {
         b.setClienteId(10);
         b.setGorroId(20);
 
+        // Crear boleta guardada (con ID generado)
         Boleta bGuardada = new Boleta();
         bGuardada.setId(1);
         bGuardada.setFecha(b.getFecha());
@@ -161,40 +175,35 @@ public class BoletaServiceTest {
         bGuardada.setClienteId(10);
         bGuardada.setGorroId(20);
 
+        // Configurar mock del repositorio
         when(boletaRepository.save(any(Boleta.class))).thenReturn(bGuardada);
 
+        // Ejecutar método a probar
         Boleta resultado = boletaService.guardar(b);
 
+        // Verificar resultados
         assertNotNull(resultado);
         assertEquals(1, resultado.getId());
         assertEquals(10, resultado.getClienteId());
+        
+        // Verificar que se llamó al repositorio
         verify(boletaRepository, times(1)).save(b);
     }
 
     @Test
     public void testEliminarExistente() {
-        MetodoPago mp = new MetodoPago();
-        mp.setId(1);
-        mp.setNombre("Efectivo");
-        MetodoE me = new MetodoE();
-        me.setId(1);
-        me.setNombre("Envío Express");
+        // Configurar mock del repositorio
+        when(boletaRepository.findById(1)).thenReturn(Optional.of(b1));
+        doNothing().when(boletaRepository).delete(b1);
 
-        Boleta b = new Boleta();
-        b.setId(1);
-        b.setFecha(LocalDate.now());
-        b.setMetodoPago(mp);
-        b.setMetodoEnvio(me);
-        b.setClienteId(10);
-        b.setGorroId(20);
-
-        when(boletaRepository.findById(1)).thenReturn(Optional.of(b));
-        doNothing().when(boletaRepository).delete(b);
-
+        // Ejecutar método a probar
         String mensaje = boletaService.eliminar(1);
 
+        // Verificar resultados
         assertEquals("La boleta 1 ha sido eliminada exitosamente", mensaje);
+        
+        // Verificar que se llamó al repositorio
         verify(boletaRepository, times(1)).findById(1);
-        verify(boletaRepository, times(1)).delete(b);
+        verify(boletaRepository, times(1)).delete(b1);
     }
 }

@@ -40,7 +40,6 @@ spring:
           allow-credentials: false
           max-age: 3600
 
----
 
 ---
 
@@ -88,7 +87,7 @@ spring:
       ddl-auto: create-drop   
     show-sql: false           
 
-
+---
 
 spring:
   config:
